@@ -7,13 +7,14 @@ use App\Models\Recipient;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\CryptionController;
 
-class ConversationsController extends Controller
+class ConversationsController extends CryptionController
 {
     public function index()
     {
         $user = Auth::user();
-        return $user->conversations()->with([
+        $conversations = $user->conversations()->with([
             'lastMessage',
             'participants' => function($builder) use ($user) {
                 $builder->where('id', '<>', $user->id);
@@ -23,10 +24,20 @@ class ConversationsController extends Controller
                     $builder->where('recipients.user_id', '=', $user->id)
                         ->whereNull('read_at');
                 }
-            ])
-            ->paginate();
-    }
-
+            ])->paginate();
+        //    ->paginate();
+        
+        // Decrypt the last message without losing the pagination structure
+        $conversations->getCollection()->transform(function ($conversation) {
+            // Decrypt the last message
+            if ($conversation->lastMessage && $conversation->key) {
+                $key = decrypt($conversation->key); // Decrypt the key
+                $conversation->lastMessage->body = $this->decryptMessage($conversation->lastMessage->body, $key);
+            }
+            return $conversation;
+        });
+        return $conversations;
+      }
     public function show($id)
     {
         $user = Auth::user();

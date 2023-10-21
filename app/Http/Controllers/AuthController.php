@@ -18,18 +18,17 @@ class AuthController extends Controller
 
         $user = User::where('email', $data['email'])->first();
 
-if (!$user || !Hash::check($data['password'], $user->password)) {
+          if (!$user || !Hash::check($data['password'], $user->password)) {
             return response([
                 'msg' => 'incorrect username or password'
             ], 401);
         }
 
         $token = $user->createToken('apiToken')->plainTextToken;
-
         $res = [
             'user' => $user,
             'token' => $token
-        ];
+         ];
 
         return response($res, 201);
     }

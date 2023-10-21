@@ -29,10 +29,8 @@ Route::post('/login', [AuthController::class, 'login']);
     Route::put('conversations/{conversation}/read', [ConversationsController::class, 'markAsRead']);
     Route::delete('messages/{id}', [MessagesController::class, 'destroy']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    
     // Route::get('conversations/{conversation}', [ConversationsController::class, 'show']);
     // Route::post('conversations/{conversation}/participants', [ConversationsController::class, 'addParticipant']);
     // Route::delete('conversations/{conversation}/participants', [ConversationsController::class, 'removeParticipant']);
 });
-
 

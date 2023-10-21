@@ -24,7 +24,9 @@
 
                             <div class="col overflow-hidden">
                                 <h5 class="text-truncate" id="chat-name">{{ conversation.participants[0].name }}</h5>
-                                <p v-if="conversation.participants[0].isTyping" class="text-truncate">is typing<span class='typing-dots'><span>.</span><span>.</span><span>.</span></span></p>
+                                <p 
+                                v-if="conversation.participants[0].isTyping"
+                                 class="text-truncate">is typing<span class='typing-dots'><span>.</span><span>.</span><span>.</span></span></p>
                             </div>
                         </div>
                     </div>

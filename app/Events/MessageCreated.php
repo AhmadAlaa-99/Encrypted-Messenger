@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Message;
+use App\Models\Conversation;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -20,6 +21,7 @@ class MessageCreated implements ShouldBroadcast
      * @var \App\Models\Message
      */
     public $message;
+    public $decrypt;
 
     /**
      * Create a new event instance.
@@ -28,11 +30,14 @@ class MessageCreated implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(Message $message)
+    public function __construct(Message $message,$decrypt)
     {
         $this->message = $message;
+        $this->message->body = $decrypt;
+        $this->decrypt = $decrypt;
+        
     }
-
+    // Assuming you have a method in your event class to decrypt the message.
     /**
      * Get the channels the event should broadcast on.
      *
@@ -43,7 +48,8 @@ class MessageCreated implements ShouldBroadcast
         $other_user = $this->message->conversation->participants()
             ->where('user_id', '<>', $this->message->user_id)
             ->first();
-        return new PresenceChannel('Messenger.' . $other_user->id);
+       // return new PresenceChannel('Messenger.' . $other_user->id);
+       return new Channel('Messenger.' . $other_user->id);
     }
 
     public function broadcastAs()

@@ -1761,6 +1761,7 @@
     </div>
 
     <!-- Scripts -->
+    
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> --}}
     <script src="{{ asset('js/moment.js') }}"></script>
     <script src="{{ asset('js/manifest.js') }}"></script>
@@ -1774,10 +1775,10 @@
     <script src="{{ asset('assets/js/vendor.js') }}"></script>
     <script src="{{ asset('assets/js/template.js') }}"></script>
 
-    {{--
-        <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+    {{-- //pusher with jequery 
+        <script src="https://js.pusher.com/7.0/pusher.min.js"></script> //can use laravel echo(incude pusher) instead 
         <script>
-        // Enable pusher logging - don't include this in production
+        // Enable pusher lo gging - don't include this in production
         Pusher.logToConsole = true;
 
         var pusher = new Pusher('9bbd1071bbb820b9aef1', {
@@ -1785,10 +1786,12 @@
             authEndpoint: "/broadcasting/auth",
         });
 
-        var channel = pusher.subscribe(`presence-Messenger.${userId}`);
-        channel.bind('new-message', function(data) {
+        var channel = pusher.subscribe(`presence-Messenger.${userId}`); channel : presence-Messenger
+        channel.bind('new-message', function(data) //event : new-message
+         {
             addMessage(data.message)
         });
+
     </script>
 --}}
 

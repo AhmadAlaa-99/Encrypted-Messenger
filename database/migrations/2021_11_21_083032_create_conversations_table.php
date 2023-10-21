@@ -21,6 +21,7 @@ class CreateConversationsTable extends Migration
                 ->nullOnDelete();
             $table->string('label')->nullable();
             $table->enum('type', ['peer', 'group'])->default('peer');
+            $table->text('key')->nullable(); 
             $table->timestamps();
         });
     }

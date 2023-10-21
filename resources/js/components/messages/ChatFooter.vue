@@ -62,13 +62,14 @@ export default {
                 });
             }
             if (this.timeout) {
-                clearTimeout(this.timeout);
+                clearTimeout(this.timeout);  //stop write 
             }
-            this.timeout = setTimeout(() => {
+            this.timeout = setTimeout(() => 
+            {
                 this.start_typing = false;
                 this.$root.chatChannel.whisper('stopped-typing', {
                     id: this.$root.userId,
-                    conversation_id: this.$root.conversation.id
+                    conversation_id: this.$root.conversation.id  //for any conversation typing  
                 });
             }, 1000);
         },
@@ -103,19 +104,19 @@ export default {
             
             this.message = "";
             this.attachment = null;
-        },
-        selectFile() {
+        }, 
+        selectFile() { 
             let fileElm = document.createElement('input');
             fileElm.setAttribute('type', 'file');
             
             fileElm.addEventListener('change', () => {
-                if (fileElm.files.length == 0) {
+                if (fileElm.files.length == 0) //not selected any file
+                 {
                     return;
                 }
-                this.attachment = fileElm.files[0];
-                this.sendMessage();
+                this.attachment = fileElm.files[0]; //firstFile 
+                this.sendMessage();  //
             });
-
             fileElm.click();
         }
     }
