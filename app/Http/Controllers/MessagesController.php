@@ -134,14 +134,14 @@ class MessagesController extends CryptionController
         DB::beginTransaction();
         try {
             if ($conversation_id) {
-                $conversation = $user->conversations()->with(['participants'])->findOrFail($conversation_id);
+                $conversation = $user->conversations()->findOrFail($conversation_id);
             } else {
                 $conversation = Conversation::where('type', '=', 'peer')
                     ->whereHas('participants', function ($builder) use ($user_id, $user) {
                     $builder->join('participants as participants2', 'participants2.conversation_id', '=', 'participants.conversation_id')
                             ->where('participants.user_id', '=', $user_id)
                             ->where('participants2.user_id', '=', $user->id);
-                })->with(['participants'])->first();
+                })->first();
 
                 if (!$conversation) {
                     $conversation = Conversation::create([
