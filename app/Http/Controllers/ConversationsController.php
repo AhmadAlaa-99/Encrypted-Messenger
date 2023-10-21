@@ -16,9 +16,11 @@ class ConversationsController extends CryptionController
         $user = Auth::user();
         $conversations = $user->conversations()->with([
             'lastMessage',
-            'participants' => function($builder) use ($user) {
-                $builder->where('id', '<>', $user->id);
-            },])
+            'participants',
+            //  => function($builder) use ($user) {
+            //      $builder->where('user_id', '<>', $user->id);
+            //  },
+            ])
             ->withCount([
                 'recipients as new_messages' => function($builder) use ($user) {
                     $builder->where('recipients.user_id', '=', $user->id)
@@ -44,7 +46,7 @@ class ConversationsController extends CryptionController
         return $user->conversations()->with([
             'lastMessage',
             'participants' => function($builder) use ($user) {
-                $builder->where('id', '<>', $user->id);
+                $builder->where('user_id', '<>', $user->id);
             },])
             ->withCount([
                 'recipients as new_messages' => function($builder) use ($user) {

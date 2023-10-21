@@ -53,9 +53,10 @@ class MessagesController extends CryptionController
     {
         $user = Auth::user();
         $conversation = $user->conversations()
-            ->with(['participants' => function($builder) use ($user) {
-            $builder->where('id', '<>', $user->id);
-        }])
+            ->with(['participants'])
+        //      => function($builder) use ($user) {
+        //     $builder->where('user_id', '<>', $user->id);
+        // }])
         ->findOrFail($id);
         $key = decrypt($conversation->key);
 
@@ -133,14 +134,14 @@ class MessagesController extends CryptionController
         DB::beginTransaction();
         try {
             if ($conversation_id) {
-                $conversation = $user->conversations()->findOrFail($conversation_id);
+                $conversation = $user->conversations()->with(['participants'])->findOrFail($conversation_id);
             } else {
                 $conversation = Conversation::where('type', '=', 'peer')
                     ->whereHas('participants', function ($builder) use ($user_id, $user) {
                     $builder->join('participants as participants2', 'participants2.conversation_id', '=', 'participants.conversation_id')
                             ->where('participants.user_id', '=', $user_id)
                             ->where('participants2.user_id', '=', $user->id);
-                })->first();
+                })->with(['participants'])->first();
 
                 if (!$conversation) {
                     $conversation = Conversation::create([
@@ -185,8 +186,7 @@ class MessagesController extends CryptionController
                 'last_message_id' => $message->id,
             ]);
             DB::commit();
-           
-            $message->load('user');
+            $message->load('user');            
             $decryptedMessage = $this->decryptMessage($message->body, $key); // Decrypt the message
             $message->body = $decryptedMessage;
             

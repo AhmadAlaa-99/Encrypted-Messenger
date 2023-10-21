@@ -705,21 +705,29 @@
                                                     <p>wright@studio.com</p>
                                                 </div>
                                                 <div class="col-auto">
-                                                    <a href="#" class="text-muted">
-                                                        <div class="icon">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                height="24" viewBox="0 0 24 24" fill="none"
-                                                                stroke="currentColor" stroke-width="2"
-                                                                stroke-linecap="round" stroke-linejoin="round"
-                                                                class="feather feather-log-out">
-                                                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4">
-                                                                </path>
-                                                                <polyline points="16 17 21 12 16 7"></polyline>
-                                                                <line x1="21" y1="12" x2="9"
-                                                                    y2="12"></line>
-                                                            </svg>
-                                                        </div>
+                                                    <a class="dropdown-item logout pb-0" href="{{ route('logout') }}"
+                                                    onclick="event.preventDefault();document.getElementById('logout-form').submit();" >
+                                                    <div class="icon">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                            height="24" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                            class="feather feather-log-out">
+                                                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4">
+                                                            </path>
+                                                            <polyline points="16 17 21 12 16 7"></polyline>
+                                                            <line x1="21" y1="12" x2="9"
+                                                                y2="12"></line>
+                                                        </svg>
+                                                    </div>
+                                                  
+                                                      <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                                        @csrf
+                                                        <span class="ms-2"> </span>
+                                                    </form>
                                                     </a>
+                                                    
+                                                   
                                                 </div>
                                             </div>
                                         </div>
