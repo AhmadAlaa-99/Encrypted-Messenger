@@ -53,10 +53,9 @@ class MessagesController extends CryptionController
     {
         $user = Auth::user();
         $conversation = $user->conversations()
-            ->with(['participants'])
-        //      => function($builder) use ($user) {
-        //     $builder->where('user_id', '<>', $user->id);
-        // }])
+            ->with(['participants'=> function($builder) use ($user) {
+             $builder->where('user_id', '<>', $user->id);
+         }])
         ->findOrFail($id);
         $key = decrypt($conversation->key);
 
@@ -87,14 +86,6 @@ class MessagesController extends CryptionController
         'conversation' => $conversation,
         'messages' => $messages,
     ];
-    
-    
-    
-    
-    
-    
-         
-    
     }
     /**
      * Store a newly created resource in storage.
@@ -190,7 +181,7 @@ class MessagesController extends CryptionController
             $decryptedMessage = $this->decryptMessage($message->body, $key); // Decrypt the message
             $message->body = $decryptedMessage;
             
-            broadcast(new MessageCreated($message,$decryptedMessage));
+            broadcast(new MessageCreated($message));
             // Return the message with the decrypted body
             return $message;
     

@@ -30,12 +30,9 @@ class MessageCreated implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(Message $message,$decrypt)
+    public function __construct(Message $message)
     {
         $this->message = $message;
-        $this->message->body = $decrypt;
-        $this->decrypt = $decrypt;
-        
     }
     // Assuming you have a method in your event class to decrypt the message.
     /**
