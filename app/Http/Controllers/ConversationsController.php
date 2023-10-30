@@ -37,9 +37,9 @@ class ConversationsController extends CryptionController
             // Decrypt the last message
             if ($conversation->lastMessage && $conversation->key) {
                 $key = decrypt($conversation->key); // Decrypt the key
-                if ($conversation->lastMessage->type=='text'){
+             
                 $conversation->lastMessage->body = $this->decryptMessage($conversation->lastMessage->body, $key);
-                }
+                
             }
             return $conversation;
     });

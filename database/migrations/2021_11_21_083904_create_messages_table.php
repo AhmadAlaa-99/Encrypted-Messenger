@@ -23,7 +23,7 @@ class CreateMessagesTable extends Migration
                 ->constrained('users')
                 ->nullOnDelete();
             $table->text('body');
-            $table->text('type')->default('text');
+            $table->string('type')->default('text');
             $table->timestamps();
             $table->softDeletes();
         });

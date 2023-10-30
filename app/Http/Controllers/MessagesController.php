@@ -79,10 +79,10 @@ class MessagesController extends CryptionController
     // Decrypt message bodies without losing the pagination structure
    
             $messages->getCollection()->transform(function ($message) use ($key) {
-                if ($message->type=='text'){
+              
             $message->body = $this->decryptMessage($message->body, $key);
             return $message;
-                }
+                
         });
   
     return [
@@ -150,17 +150,20 @@ class MessagesController extends CryptionController
                     ]);
                 }
             }
-            $type = 'text';
             $key = decrypt($conversation->key);
-            $message = $this->encryptMessage($request->post('message'), $key); 
+            if ($request->post('text')) 
+            {
+                $message = $this->encryptMessage($request->post('message'), $key);
+                $type = 'text'; 
+            }
             if ($request->hasFile('image')) 
             {
                 $file = $request->file('image');
                 $imagename=rand() . '.'. $file->getClientOriginalExtension();
                 $file->move(public_path('uploads/messages/images'),$imagename);
                 $path="public/uploads/messages/images/$imagename";
-                $message = $path;
-               
+                $message = $path;  
+                $message = $this->encryptMessage($path, $key);
                 $type = 'image';
             }
             if ($request->hasFile('voice')) 
@@ -170,7 +173,7 @@ class MessagesController extends CryptionController
                 $file->move(public_path('uploads/messages/voices'),$voicename);
                 $path="public/uploads/messages/voices/$voicename";
                 $message = $path;
-                
+                $message = $this->encryptMessage($path, $key);
                 $type = 'voice';
             }
             $message = $conversation->messages()->create([
@@ -190,10 +193,10 @@ class MessagesController extends CryptionController
             DB::commit();
             $message->load('user');    
             //decrypt
-            if ($type=='text'){
+            
+          
             $decryptedMessage = $this->decryptMessage($message->body, $key); // Decrypt the message
             $message->body = $decryptedMessage;
-            }
             broadcast(new MessageCreated($message));
             // Return the message with the decrypted body
             return $message;
