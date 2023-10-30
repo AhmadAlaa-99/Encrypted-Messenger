@@ -151,7 +151,7 @@ class MessagesController extends CryptionController
                 }
             }
             $key = decrypt($conversation->key);
-            if ($request->post('text')) 
+            if ($request->post('message')) 
             {
                 $message = $this->encryptMessage($request->post('message'), $key);
                 $type = 'text'; 
