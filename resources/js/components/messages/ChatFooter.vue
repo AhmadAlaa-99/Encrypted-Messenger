@@ -18,7 +18,8 @@
 
                 <div class="col">
                     <div class="input-group">
-                        <textarea name="message" v-model="message" @focus="$root.markAsRead()" @keypress="startTyping()" class="form-control px-0" placeholder="Type your message..." rows="1" data-emoji-input="" data-autosize="true"></textarea>
+                        <textarea name="message" v-model="message" @focus="$root.markAsRead()" @keypress="startTyping()"
+                         class="form-control px-0" placeholder="Type your message..." rows="1" data-emoji-input="" data-autosize="true"></textarea>
 
                         <a href="#" class="input-group-text text-body pe-0" data-emoji-btn="">
                             <span class="icon icon-lg">
@@ -53,7 +54,8 @@ export default {
         }
     },
     methods: {
-        startTyping() {
+        startTyping() //done whispar to channelChat
+         {
             if (!this.start_typing) {
                 this.start_typing = true;
                 this.$root.chatChannel.whisper('typing', {

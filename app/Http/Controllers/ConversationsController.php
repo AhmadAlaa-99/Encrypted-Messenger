@@ -18,7 +18,7 @@ class ConversationsController extends CryptionController
             'lastMessage',
             'participants'
               => function($builder) use ($user) {
-                  $builder->where('user_id', '<>', $user->id);
+                  $builder->where('user_id','<>', $user->id);
               },
             ])
             ->withCount([
@@ -30,15 +30,24 @@ class ConversationsController extends CryptionController
         //    ->paginate();
         
         // Decrypt the last message without losing the pagination structure
-        $conversations->getCollection()->transform(function ($conversation) {
+        
+        $conversations->getCollection()->transform(function ($conversation) 
+        {
+           
             // Decrypt the last message
             if ($conversation->lastMessage && $conversation->key) {
                 $key = decrypt($conversation->key); // Decrypt the key
+                if ($conversation->lastMessage->type=='text'){
                 $conversation->lastMessage->body = $this->decryptMessage($conversation->lastMessage->body, $key);
+                }
             }
             return $conversation;
-        });
-        return $conversations;
+    });
+         return $conversations;
+        // return [
+        //     'myId' => $user->id,
+        //     'conversations' => $conversations
+        // ];
       }
     public function show($id)
     {

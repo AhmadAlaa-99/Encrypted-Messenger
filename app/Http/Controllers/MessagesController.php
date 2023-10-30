@@ -77,11 +77,14 @@ class MessagesController extends CryptionController
         ->latest()->paginate();
       //  ->paginate();
     // Decrypt message bodies without losing the pagination structure
-    $messages->getCollection()->transform(function ($message) use ($key) {
-        $message->body = $this->decryptMessage($message->body, $key);
-        return $message;
-    });
-    
+   
+            $messages->getCollection()->transform(function ($message) use ($key) {
+                if ($message->type=='text'){
+            $message->body = $this->decryptMessage($message->body, $key);
+            return $message;
+                }
+        });
+  
     return [
         'conversation' => $conversation,
         'messages' => $messages,
@@ -93,6 +96,143 @@ class MessagesController extends CryptionController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+
+     
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         // 'message' => [Rule::requiredIf(function() use ($request) {
+    //         //     return !$request->hasFile('attachment');
+    //         // }), 'string'],
+    //         // 'attachment' => ['file'],
+    //         'conversation_id' => [
+    //             Rule::requiredIf(function() use ($request) {
+    //                 return !$request->input('user_id');
+    //             }),
+    //             'int', 
+    //             'exists:conversations,id',
+    //         ],
+    //         'user_id' => [
+    //             Rule::requiredIf(function() use ($request) {
+    //                 return !$request->input('conversation_id');
+    //             }),
+    //             'int', 
+    //             'exists:users,id',
+    //         ],
+    //     ]);
+
+    //     $user = Auth::user();
+    //    // $user = User::first();
+
+    //     $conversation_id = $request->post('conversation_id');
+    //     $user_id = $request->post('user_id');
+
+    //     DB::beginTransaction();
+    //     try {
+    //         if ($conversation_id) {
+    //             $conversation = $user->conversations()->findOrFail($conversation_id);
+    //         } else {
+    //             $conversation = Conversation::where('type', '=', 'peer')
+    //                 ->whereHas('participants', function ($builder) use ($user_id, $user) {
+    //                 $builder->join('participants as participants2', 'participants2.conversation_id', '=', 'participants.conversation_id')
+    //                         ->where('participants.user_id', '=', $user_id)
+    //                         ->where('participants2.user_id', '=', $user->id);
+    //             })->first();
+
+    //             if (!$conversation) {
+    //                 $conversation = Conversation::create([
+    //                     'user_id' => $user->id,
+    //                     'type' => 'peer',
+    //                     'key'=>encrypt(bin2hex(random_bytes(16))),
+    //                 ]);
+    //                 $conversation->participants()->attach([
+    //                     $user->id => ['joined_at' => now()], 
+    //                     $user_id => ['joined_at' => now()],
+    //                 ]);
+    //             }
+    //         }
+    //         $type = 'text';
+           
+  
+    //         if ($request->hasFile('attachment')) 
+    //         {
+    //             $file = $request->file('attachment');
+    //             $message = [
+    //                 'file_name' => $file->getClientOriginalName(),
+    //                 'file_size' => $file->getSize(),
+    //                 'mimetype' => $file->getMimeType(),
+    //                 'file_path' => $file->store('attachments', [
+    //                     'disk' => 'public'
+    //                 ]),
+    //             ];
+    //             $type = 'attachment';
+    //         }
+    //         if ($type=='text')
+    //         {
+    //             $key = decrypt($conversation->key);
+    //             $message = $this->encryptMessage($request->post('message'),$key); 
+    //         }
+    //         // if ($request->hasFile('image')) 
+    //         // {
+    //         //     $file = $request->file('image');
+    //         //     $message = [
+    //         //         'file_name' => $file->getClientOriginalName(),
+    //         //         'file_size' => $file->getSize(),
+    //         //         'mimetype' => $file->getMimeType(),
+    //         //         'file_path' => $file->store('images', [
+    //         //             'disk' => 'public'
+    //         //         ]),
+    //         //     ];
+    //         //     $type = 'image';
+    //         // }
+    //         // if ($request->hasFile('voice')) 
+    //         // {
+    //         //     $file = $request->file('voice');
+    //         //     $message = [
+    //         //         'file_name' => $file->getClientOriginalName(),
+    //         //         'file_size' => $file->getSize(),
+    //         //         'mimetype' => $file->getMimeType(),
+    //         //         'file_path' => $file->store('voices', [
+    //         //             'disk' => 'public'
+    //         //         ]),
+    //         //     ];
+    //         //     $type = 'voice';
+    //         // }
+    //         $message = $conversation->messages()->create([
+    //             'user_id' => $user->id,
+    //             'type' => $type,
+    //             'body' => $message,
+    //         ]);
+    //         DB::statement('
+    //             INSERT INTO recipients (user_id, message_id)
+    //             SELECT user_id, ? FROM participants
+    //             WHERE conversation_id = ?
+    //             AND user_id <> ?
+    //         ', [$message->id, $conversation->id, $user->id]);
+    //         $conversation->update([
+    //             'last_message_id' => $message->id,
+    //         ]);
+    //         DB::commit();
+    //         $message->load('user');            
+    //         if ($type=='text'){
+    //              $decryptedMessage = $this->decryptMessage($message->body, $key); // Decrypt the message
+    //              $message->body = $decryptedMessage;
+    //              }
+                 
+       
+            
+    //         broadcast(new MessageCreated($message));
+    //         // Return the message with the decrypted body
+    //         return $message;
+    
+
+    //     } catch (Throwable $e) {
+    //         DB::rollBack();
+
+    //         throw $e;
+    //     } 
+    // }
     public function store(Request $request)
     {
         $request->validate([
@@ -149,18 +289,25 @@ class MessagesController extends CryptionController
             $type = 'text';
             $key = decrypt($conversation->key);
             $message = $this->encryptMessage($request->post('message'), $key); 
-            if ($request->hasFile('attachment')) 
+            if ($request->hasFile('image')) 
             {
-                $file = $request->file('attachment');
-                $message = [
-                    'file_name' => $file->getClientOriginalName(),
-                    'file_size' => $file->getSize(),
-                    'mimetype' => $file->getMimeType(),
-                    'file_path' => $file->store('attachments', [
-                        'disk' => 'public'
-                    ]),
-                ];
-                $type = 'attachment';
+                $file = $request->file('image');
+                $imagename=rand() . '.'. $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/messages/images'),$imagename);
+                $path="public/uploads/messages/images/$imagename";
+                $message = $path;
+               
+                $type = 'image';
+            }
+            if ($request->hasFile('voice')) 
+            {
+                $file = $request->file('voice');
+                $voicename=rand() . '.'. $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/messages/voices'),$voicename);
+                $path="public/uploads/messages/voices/$voicename";
+                $message = $path;
+                
+                $type = 'voice';
             }
             $message = $conversation->messages()->create([
                 'user_id' => $user->id,
@@ -177,10 +324,12 @@ class MessagesController extends CryptionController
                 'last_message_id' => $message->id,
             ]);
             DB::commit();
-            $message->load('user');            
+            $message->load('user');    
+            //decrypt
+            if ($type=='text'){
             $decryptedMessage = $this->decryptMessage($message->body, $key); // Decrypt the message
             $message->body = $decryptedMessage;
-            
+            }
             broadcast(new MessageCreated($message));
             // Return the message with the decrypted body
             return $message;

@@ -23,8 +23,7 @@ class CreateMessagesTable extends Migration
                 ->constrained('users')
                 ->nullOnDelete();
             $table->text('body');
-            $table->enum('type', ['text', 'attachment'])
-                ->default('text');
+            $table->text('type')->default('text');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -33,6 +33,7 @@
                     <div class="row gx-5">
                         <div class="col-auto">
                             <div class="avatar" :class="{ 'avatar-online': conversation.participants[0].isOnline }">
+                                <!--isOnline he parameter done in mounted in this component -->
                                 <img v-bind:src="conversation.participants[0].avatar_url">
                             </div>
                         </div>
@@ -81,7 +82,7 @@ export default {
             .then(response => response.json())
             .then(json => {
                 for (let i in json.data) {
-                    json.data[i].participants[0].isOnline = false;
+                    json.data[i].participants[0].isOnline = false; //isOnline:function()
                 }
                 this.$root.conversations = json.data;
             })
