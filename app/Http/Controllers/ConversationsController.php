@@ -43,11 +43,11 @@ class ConversationsController extends CryptionController
             }
             return $conversation;
     });
-         return $conversations;
-        // return [
-        //     'myId' => $user->id,
-        //     'conversations' => $conversations
-        // ];
+       //  return $conversations;
+        return [
+            'myId' => $user->id,
+            'conversations' => $conversations
+        ];
       }
     public function show($id)
     {
